@@ -95,7 +95,7 @@ class NetWorthTemplateContainer extends Component {
       item.id,
       item.category,
       item.description,
-      item.value
+      Math.round(item.value)
     );
   }
 
@@ -115,7 +115,7 @@ class NetWorthTemplateContainer extends Component {
       item.id,
       item.category,
       item.description,
-      item.value
+      Math.round(item.value)
     );
   }
 
@@ -153,10 +153,49 @@ class NetWorthTemplateContainer extends Component {
   changeCurrency(state, prevCurrency) {
     //AJAX Call update Currency
     putCurrencyService(this.currencyUrl, state.id, state.currency);
-    //fetch currency rate
-    const promiseRateData = getRateService("EUR", state.currency);
-    promiseRateData.then(response => {
-      console.log(response.rates[state.currency]);
+    //fetch currency rate EUR -> New Currency
+    const promiseRateData1 = getRateService("EUR", state.currency);
+    //fetch currency rate EUR -> Prev Currency
+    const promiseRateData2 = getRateService("EUR", prevCurrency);
+    //wait for all promises to be resolved, then calculate exchange rate
+    Promise.all([promiseRateData1, promiseRateData2]).then(response => {
+      let rate =
+        response[0].rates[state.currency] / response[1].rates[prevCurrency];
+      console.log(rate);
+
+      // const assets = [...this.state.assets];
+      // for (let i = 0; i < assets.length; i++) {
+      //   assets[i].value *= rate;
+      // }
+      // const liabilities = [...this.state.liabilities];
+      // for (let i = 0; i < liabilities.length; i++) {
+      //   liabilities[i].value *= rate;
+      // }
+      // this.setState({ assets, liabilities }, () => {
+      //   this.refreshTotals();
+      // });
+
+      //AJAX calls: update assets
+      for (let i = 0; i < this.state.assets.length; i++) {
+        putService(
+          this.assetUrl,
+          this.state.assets[i].id,
+          this.state.assets[i].category,
+          this.state.assets[i].description,
+          Math.round(this.state.assets[i].value * rate)
+        );
+      }
+      //AJAX calls: update liabilities
+      for (let i = 0; i < this.state.liabilities.length; i++) {
+        putService(
+          this.liabilityUrl,
+          this.state.liabilities[i].id,
+          this.state.liabilities[i].category,
+          this.state.liabilities[i].description,
+          Math.round(this.state.liabilities[i].value * rate)
+        );
+      }
+      window.location.reload(); //refresh currect page
     });
   }
 

@@ -36,7 +36,7 @@ class NetWorthTemplate extends Component {
   render() {
     return (
       <div>
-        Tracking your Net Worth
+        <h3>Tracking your Net Worth</h3>
         <DropdownButton title={this.state.currency} size="sm" variant="">
           <Dropdown.Item onClick={() => this.handleCurrencyChange("CAD")}>
             CAD

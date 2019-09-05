@@ -36,10 +36,10 @@ class Balance extends Component {
           onChange={e => this.handleDescriptionChange(e)}
         />
         <input
+          type="text"
+          pattern="[0-9]"
           value={this.state.value}
           onChange={e => this.handleValueChange(e)}
-          type="number"
-          step="0.01"
           min="0"
         />
       </div>
