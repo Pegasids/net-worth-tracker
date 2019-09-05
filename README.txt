@@ -12,3 +12,4 @@ README:
 *uncomment line 9 - populate("/api/asset", "/api/liability", "/api/currency");
 *save and hot reload
 *comment line 9 for application to function properly
+*save and hot reload again
